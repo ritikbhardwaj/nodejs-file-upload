@@ -1,8 +1,12 @@
 const multiparty = require('multiparty'),
     http = require('http'),
-    path = require('path');
+    path = require('path'),
+    static = require('./fileserver'),
+    fs = require('fs');
 
 http.createServer(function (req, res) {
+    //serve the static files
+    static(req, res, 'public');
     if (req.url == '/upload' && req.method == 'POST') {
         const options = {
             encoding: "utf-8",
@@ -34,16 +38,15 @@ http.createServer(function (req, res) {
             }
             res.end(JSON.stringify(fileInfo));
         });
-    } else if (req.url == '/') {
-        res.writeHead(200, { 'content-type': 'text/html' });
-        res.end(
-            '<form action="/upload" enctype="multipart/form-data" method="post">' +
-            '<input type="text" name="title"><br>' +
-            '<input type="file" name="upload" multiple="multiple"><br>' +
-            '<input type="submit" value="Upload">' +
-            '</form>'
-        );
+        //To get the list of files present in the directory
+    } else if (req.url == '/files' && req.method == 'GET') {
+        fs.readdir('./uploads', function (err, files) {
+            if (err) throw err;
+            res.writeHead(200, { "Content-Type": "text/plain" });
+            res.end(JSON.stringify(files));
+        });
     }
+
 }).listen(8000, function () {
     console.log("Server started!");
 })
