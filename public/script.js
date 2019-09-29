@@ -22,14 +22,14 @@ $(document).ready(function () {
             formData.append('myFile', file);
         }
 
-        uploadFile("http://localhost:8000/upload", formData).then(function (resp) {
+        uploadFile("https://ritik-file-upload.herokuapp.com/upload", formData).then(function (resp) {
             console.log(resp);
         });
     });
     //If the refresh button is pressed, clear all the children of the #files div and append the new list.
     $('#btnRefresh').click(function () {
         $('.file-display #files').empty()
-        getFiles('http://localhost:8000/files').then(function (response) {
+        getFiles('https://ritik-file-upload.herokuapp.com/files').then(function (response) {
             response.forEach(function (file) {
                 $('#files').append(`<h3>${file}</h3>`);
             })
